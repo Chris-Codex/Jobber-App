@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify';
 import { Logo } from '../components'
 import FormRow from '../components/FormRow';
 import Wrapper from './../assets/wrappers/SharedLayout';
@@ -13,6 +14,8 @@ const initialstate = {
 const Register = () => {
     const [values, setValues] = useState(initialstate)
 
+    console.log("VALUES", values)
+
     const handleChange = (e) => {
         setValues({...values, [e.target.name] : e.target.value})
     }
@@ -21,6 +24,10 @@ const Register = () => {
         e.preventDefault()
 
         const {name, email, password, isMember} = values
+        if(!name || !email || !password || !isMember){
+            toast.error("All fields are required")
+            return
+        }
     }
 
     const toggleMember = () => {
