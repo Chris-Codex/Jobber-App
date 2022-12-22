@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Logo } from '../components'
 import FormRow from '../components/FormRow';
+import { loginUser, registerUser } from '../features/userSlice/userSlice';
 import Wrapper from './../assets/wrappers/SharedLayout';
+
 
 const initialstate = {
     name: "",
@@ -12,6 +15,8 @@ const initialstate = {
 }
 
 const Register = () => {
+    const dispatch = useDispatch()
+    const { user, isLoading } = useSelector((store) => store.user)
     const [values, setValues] = useState(initialstate)
 
     console.log("VALUES", values)
@@ -24,10 +29,17 @@ const Register = () => {
         e.preventDefault()
 
         const {name, email, password, isMember} = values
-        if(!name || !email || !password || !isMember){
+        if(!email || !password || (!name && !isMember)){
             toast.error("All fields are required")
             return
         }
+
+        if(isMember){
+            dispatch(loginUser({email, password}))
+            toast.success("Login was Successul")
+            return
+        }
+        dispatch(registerUser({name, email, password}))
     }
 
     const toggleMember = () => {
@@ -86,7 +98,7 @@ const Register = () => {
             </button>
             <p>
                 {values.isMember ? "Not a Member yet" : "Already a Member"}
-                <button type='button' className='member-btn' onClick={toggleMember}>
+                <button type='button' className='member-btn' onClick={toggleMember} disabled={isLoading}>
                     {!values.isMember ? "Login" : "Register"}
                 </button>
             </p>
